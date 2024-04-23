@@ -3,7 +3,7 @@
     <div class="content">
       <h1>Todo List</h1>
       <ol>
-        <li v-for="(item, index) in todoItems" :key="item" class="list-item">
+        <li v-for="(item, index) in getTodoItems" :key="item" class="list-item">
           <div class="col-8">
             <span>{{ index + 1 }}. </span>
             <span v-if="!isEdit[index]">{{ item }}</span>
@@ -36,6 +36,7 @@
 <script>
 import MyButton from "@/components/Button.vue";
 import {danger, primary, warning} from "@/utils/color";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "TodoList",
@@ -58,17 +59,17 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["addTodoItem", "deleteTodoItem", "updateTodoItem"]),
     addTodo() {
-      console.log("add")
       if (this.todoValue === "") {
         this.isErrorInsert = true;
         return;
       }
-      this.todoItems.push(this.todoValue);
+      this.addTodoItem(this.todoValue)
       this.todoValue = "";
     },
     deleteTodo(index) {
-      this.todoItems.splice(index, 1);
+      this.deleteTodoItem(index)
     },
     updateTodo(index) {
       this.$set(this.isEdit, index, true)
@@ -78,11 +79,12 @@ export default {
         this.isErrorUpdate = true
         return
       }
-      this.todoItems[index] = value
+      this.updateTodoItem({index, value})
       this.$set(this.isEdit, index, false)
-    }
+    },
   },
   computed: {
+    ...mapGetters(["getTodoItems"]),
     messageGreat() {
       return this.todoItems.length > 3 ? "Hebat!" : "";
     },
