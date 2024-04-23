@@ -38,8 +38,16 @@ export default new Vuex.Store({
     deleteTodoItem: ({ commit }, index) => {
       commit('deleteTodoItem', index)
     },
-    updateTodoItem: ({ commit }, { index, todoItem }) => {
-      commit('updateTodoItem', { index, todoItem })
+    updateTodoItem: ({ commit , state}, { index, todoItem }) => {
+      if (typeof todoItem === 'object' && Object.prototype.hasOwnProperty.call(todoItem, 'title') && Object.prototype.hasOwnProperty.call(todoItem, 'description')) {
+        if (index >= 0 && index < state.todoItems.length) {
+          commit('updateTodoItem', { index, todoItem })
+        } else {
+          console.error(`Cannot update todo item: index ${index} is out of bounds`)
+        }
+      } else {
+        console.error('Cannot update todo item: todoItem must be an object with title and description')
+      }
     }
   },
   modules: {

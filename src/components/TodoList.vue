@@ -5,8 +5,8 @@
       <ol>
         <li v-for="(item, index) in getTodoItems" :key="item" class="list-item">
           <div class="col-8">
-            <span>{{ index + 1 }}. </span>
-            <span v-if="!isEdit[index]">{{ item }}</span>
+            <span @click="moveToDetailView(index)">{{ index + 1 }}. </span>
+            <span v-if="!isEdit[index]" @click="moveToDetailView(index)">{{ item.title }}</span>
             <input type="text" v-if="isEdit[index]" :style="halfWidth" :value="item" @input="editedValue = $event.target.value"
                    @keyup.enter="handleUpdate(index, editedValue)"/>
             <br/>
@@ -65,7 +65,11 @@ export default {
         this.isErrorInsert = true;
         return;
       }
-      this.addTodoItem(this.todoValue)
+      let todo = {
+        title: this.todoValue,
+        description: null
+      }
+      this.addTodoItem(todo)
       this.todoValue = "";
     },
     deleteTodo(index) {
@@ -79,9 +83,16 @@ export default {
         this.isErrorUpdate = true
         return
       }
-      this.updateTodoItem({index, value})
+      let todo = {
+        title: this.todoValue,
+        description: null
+      }
+      this.updateTodoItem({index, todo})
       this.$set(this.isEdit, index, false)
     },
+    moveToDetailView(index){
+      this.$router.push({path: `/${index}`})
+    }
   },
   computed: {
     ...mapGetters(["getTodoItems"]),
